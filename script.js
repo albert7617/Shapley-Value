@@ -5,6 +5,13 @@ $(function() {
     $('#shapley .cell-players').remove();
     combinations(Array.apply(undefined, Array(parseInt($('#players :selected').val()))).map(function(x,y) { return String.fromCharCode(y + 65); }).join('')).sort(function(a, b) {return a.length - b.length || a.localeCompare(b)}).forEach(element => $('#characteristic').append(`<div class="cell-container"><div class="cell-top">${element}</div><div class="cell-bottom"><input id="${element}" type="number" value="0"></div></div>`));
   });
+  $('#random').on('click', function(event) {
+    $('#characteristic .cell-container').toArray().forEach((elem, idx) => $(elem).find('input').val(randomIntFromInterval(($(elem).find('.cell-top').html().length-1)*10, $(elem).find('.cell-top').html().length*10)));
+  });
+  $('#load').on('click', function(event) {
+    var data = [18, 16, 10, 34, 34, 30, 54];
+    $('input[type="number"]').toArray().forEach((elem, idx) => $(elem).val(data[idx]));
+  });
   $('#calculate').on('click', function(event) {
     var all_combinations = combinations(Array.apply(undefined, Array(parseInt($('#players :selected').val()))).map(function(x,y) { return String.fromCharCode(y + 65); }).join('')).sort(function(a, b) {return a.length - b.length || a.localeCompare(b)});
     var result = {};
@@ -18,7 +25,7 @@ $(function() {
     }
     var all_combinations_payoff = [];
     all_combinations.forEach(element => all_combinations_payoff[element] = $('#'+element).val());
-    players_arr.forEach(element => result[players_arr[i]] += `<div class="cell-bottom cell-wide"><div><span>{∅}</span><span data-mc="${all_combinations_payoff[element]*factorial[players-1]}">${all_combinations_payoff[element]} X 1 X ${factorial[players-1]}</span></div></div>`);
+    players_arr.forEach(element => result[element] += `<div class="cell-bottom cell-wide"><div><span>{∅}</span><span data-mc="${all_combinations_payoff[element]*factorial[players-1]}">${all_combinations_payoff[element]} X 1 X ${factorial[players-1]}</span></div></div>`);
     all_combinations.forEach(element => {
       for (var i = 0; i < players_arr.length; i++) {
         if (!element.includes(players_arr[i]))
@@ -26,7 +33,7 @@ $(function() {
       }
     });
     players_arr.forEach((e, i) => $('#player-'+e).append(result[e]));
-    players_arr.forEach((e, i) => $('#player-'+e).append(`<div class="cell-bottom cell-wide"><div><span>Total</span><span>${$('#player-'+e+' .cell-bottom span:last-child').toArray().map((e)=>e.dataset.mc).reduce((a, b)=>parseInt(a)+parseInt(b)) / factorial[players]}</span></div></div>`));
+    players_arr.forEach((e, i) => $('#player-'+e).append(`<div class="cell-bottom cell-wide"><div><span>Total</span><span>${($('#player-'+e+' .cell-bottom span:last-child').toArray().map((e)=>e.dataset.mc).reduce((a, b)=>parseInt(a)+parseInt(b)) / factorial[players]).toFixed(2)}</span></div></div>`));
   });
   $('#players').trigger('change');
 });
@@ -44,4 +51,8 @@ function combinations(str) {
     return a;
   }
   return fn("", str, []);
+}
+
+function randomIntFromInterval(min, max) { // min and max included 
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }

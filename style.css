@@ -3,6 +3,11 @@ body {
   width: 100%;
 }
 
+button, select {
+  padding: 5px;
+  margin: 5px;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -35,7 +40,7 @@ body {
 }
 
 .shapley-container {
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .row-container {
